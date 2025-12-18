@@ -8,25 +8,24 @@
     <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
     <script src="https://unpkg.com/maplibre-gl@3.0.0/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@3.0.0/dist/maplibre-gl.css" rel="stylesheet" />
-    
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 
     <style>
-      /* Estilo Oscuro / Técnico */
       body { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; background: #111; overflow: hidden; }
       #container { width: 100vw; height: 100vh; position: relative; }
 
-      /* Panel Flotante Dark Mode */
+      /* Panel Flotante */
       .panel {
         position: absolute; top: 20px; right: 20px; z-index: 10;
         width: 280px;
-        background: rgba(20, 25, 40, 0.95); /* Fondo oscuro azulado */
+        background: rgba(20, 25, 40, 0.95);
         border: 1px solid #334;
-        border-top: 4px solid #00ffff; /* Acento Cyan Neón */
+        border-top: 4px solid #00ffff;
         padding: 20px;
         color: #eee;
         border-radius: 4px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        max-height: 90vh; overflow-y: auto;
       }
       .panel h1 { font-size: 14px; margin: 0 0 5px 0; font-weight: 700; color: #00ffff; text-transform: uppercase; letter-spacing: 1px;}
       .panel h2 { font-size: 11px; margin: 0 0 20px 0; color: #aaa; font-family: 'Roboto Mono', monospace; border-bottom: 1px solid #445; padding-bottom: 8px;}
@@ -38,30 +37,37 @@
       
       .footer { margin-top: 25px; font-size: 9px; color: #667; text-align: right; font-family: 'Roboto Mono', monospace;}
       
-      /* Tooltip Estilo Dark */
       #tooltip {
         position: absolute; z-index: 20; display: none; pointer-events: none;
         background: rgba(0,0,0,0.9); border: 1px solid #00ffff;
-        padding: 6px 10px; font-size: 11px; color: #fff;
+        padding: 8px 12px; font-size: 11px; color: #fff;
         box-shadow: 4px 4px 0px rgba(0,255,255,0.2); font-family: 'Roboto Mono', monospace;
-        max-width: 220px;
+        max-width: 280px;
       }
-
-      /* Barra de gradiente para la leyenda de curvas */
       .grad-bar { height: 8px; width: 100%; background: linear-gradient(to right, #800080, #dc143c, #ff8c00, #ffff96); border-radius: 2px; margin-top:5px;}
       .grad-lbl { display: flex; justify-content: space-between; font-size: 9px; color: #aaa; margin-bottom: 10px;}
     </style>
   </head>
   <body>
 
-    <div class="panel">
+   <div class="panel">
       <h1>Análisis Territorial DGOT</h1>
       <h2>Base: IGN Argenmap Oscuro</h2>
       
+      <div class="cat">Ley 597</div>
+      <div class="row">
+        <div class="sym" style="background: rgba(220, 20, 60, 0.4); border: 2px solid #dc143c;"></div>
+        <span>Zonas Generales</span>
+      </div>
+      <div class="row">
+        <div class="sym" style="background: rgba(255, 255, 0, 0.4); border: 2px solid #ffff00;"></div>
+        <span>Subzonas</span>
+      </div>
+
       <div class="cat">Límites Urbanos</div>
       <div class="row">
-        <div class="sym" style="background: rgba(0, 255, 255, 0.3); border: 2px dashed #00ffff;"></div>
-        <span>Ejido propuesto</span>
+        <div class="sym" style="background: rgba(0, 255, 255, 0.2); border: 2px dashed #00ffff;"></div>
+        <span>Ejido Propuesto</span>
       </div>
       <div class="row">
         <div class="ln" style="border-bottom: 2px dashed #ff1493; height:0;"></div>
@@ -70,23 +76,28 @@
 
       <div class="cat">Relieve (Hipsometría)</div>
       <div class="grad-bar"></div>
-      <div class="grad-lbl"><span>Bajo (Violeta)</span><span>Alto (Amarillo)</span></div>
-      <div class="row">
-        <div class="ln" style="background: linear-gradient(to right, #dc143c, #ff8c00); height: 3px;"></div>
-        <span>Curvas 3D (Cota)</span>
-      </div>
+      <div class="grad-lbl"><span>Bajo (200m)</span><span>Alto (+900m)</span></div>
 
-      <div class="cat">Hidrografía y Ambiente</div>
+      <div class="cat">Ambiente y Recursos</div>
       <div class="row">
-        <div class="ln" style="background: #1e90ff;"></div>
+        <div class="ln" style="background: #1e90ff; height: 3px;"></div>
         <span>Cursos de Agua</span>
       </div>
-      <div class="row"><div class="sym" style="background: rgba(186,85,211,0.3); border:2px dashed #ba55d3;"></div><span>Sitio Ramsar</span></div>
-      <div class="row"><div class="sym" style="background: rgba(255,165,0,0.3); border:2px dashed #ffa500;"></div><span>R.N. Tierra Mayor</span></div>
-      <div class="row"><div class="sym" style="background: rgba(50,205,50,0.3); border:2px solid #32cd32;"></div><span>Parque Nacional</span></div>
+      <div class="row">
+        <div class="sym" style="background: rgba(186,85,211,0.2); border:2px dashed #ba55d3;"></div>
+        <span>Sitio Ramsar</span>
+      </div>
+      <div class="row">
+        <div class="sym" style="background: rgba(255,165,0,0.2); border:2px dashed #ffa500;"></div>
+        <span>R.N. Tierra Mayor</span>
+      </div>
+      <div class="row">
+        <div class="sym" style="background: rgba(50,205,50,0.2); border:2px solid #32cd32;"></div>
+        <span>Parque Nacional</span>
+      </div>
       
       <div class="footer">
-        Fuente: IGN Argenmap | IDETDF
+        Fuente: IGN Argenmap | DGOT | IDETDF
       </div>
     </div>
 
@@ -97,14 +108,10 @@
       deck.log.level = 0;
       const {DeckGL, GeoJsonLayer, TileLayer, BitmapLayer, PathStyleExtension} = deck;
 
-      // 1. CONSTANTES IGN
-      const IGN_GRIS = "mapabase_gris";
       const IGN_OSCURO = "argenmap_oscuro";
-      
-      // SELECCIÓN ACTUAL (MODO OSCURO ACTIVADO)
       const MAPA_BASE_ACTUAL = IGN_OSCURO; 
 
-      // 2. RUTAS DE ARCHIVOS (Carpeta /data)
+      // RUTAS
       const URL_EJIDO_NUEVO  = "./data/ejido_ush_propuesto.geojson"; 
       const URL_EJIDO_VIEJO  = "./data/ejido_urbano.geojson"; 
       const URL_RAMSAR       = "./data/sistema_provincial_de_areas_naturales_protegidas_ide_tdf_marzo.geojson";
@@ -112,32 +119,28 @@
       const URL_PARQUE_NAC   = "./data/parque_nacional.geojson";
       const URL_CURVAS       = "./data/curvas_nivel.geojson";
       const URL_AGUA         = "./data/corriente_de_agua_dgrh.geojson"; 
+      const URL_ZONAS_597    = "./data/ley597.geojson";
+      const URL_SUBZONAS_597 = "./data/subareas_ley597.geojson"; 
 
       new DeckGL({
         container: 'container',
         initialViewState: {
-          longitude: -68.32,
-          latitude: -54.78,
-          zoom: 11,
-          pitch: 55, // Un poco más de inclinación para ver el "brillo" de las curvas
-          bearing: 15
+          longitude: -68.32, latitude: -54.78, zoom: 11, pitch: 60, bearing: 15
         },
         controller: true,
 
+        // Z-INDEX: Las últimas capas se dibujan encima
         layers: [
-          // --- CAPA 0: BASE ARGENMAP OSCURO (TMS BLINDADO) ---
+          // 0. BASE
           new TileLayer({
             id: 'argenmap-base',
             getTileData: (tileProp) => {
               const index = tileProp.index || tileProp;
               const { x, y, z } = index;
-              if (!Number.isInteger(x) || !Number.isInteger(y) || !Number.isInteger(z)) return null;
+              if (!Number.isInteger(x)) return null;
               const yTMS = Math.pow(2, z) - 1 - y;
               const url = `https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/${MAPA_BASE_ACTUAL}@EPSG%3A3857@png/${z}/${x}/${yTMS}.png`;
-              return fetch(url)
-                .then(r => r.ok ? r.blob() : null)
-                .then(b => b ? createImageBitmap(b) : null)
-                .catch(e => null);
+              return fetch(url).then(r => r.ok ? r.blob() : null).then(b => b ? createImageBitmap(b) : null).catch(e => null);
             },
             renderSubLayers: props => {
               if (!props.data) return null;
@@ -147,7 +150,7 @@
             minZoom: 0, maxZoom: 18, tileSize: 256
           }),
 
-          // --- CAPA 1: CURVAS DE NIVEL (Hipsometría Plasma Brillante) ---
+          // 1. CAPAS DE FONDO (NO INTERACTIVAS)
           new GeoJsonLayer({
             id: 'curvas-3d',
             data: URL_CURVAS,
@@ -155,147 +158,146 @@
               if (!d.features) return d;
               return d.features.map(f => {
                 const p = f.properties;
-                // Detectar altura y guardarla para el coloreado
                 const h = parseFloat(p.crv || p.Valor || p.elevacion || p.cota || 0);
                 f.properties.z_render = h; 
-                if (f.geometry.type === 'LineString') {
-                    f.geometry.coordinates = f.geometry.coordinates.map(c => [c[0], c[1], h]);
-                } else if (f.geometry.type === 'MultiLineString') {
-                    f.geometry.coordinates = f.geometry.coordinates.map(l => l.map(c => [c[0], c[1], h]));
-                }
+                if (f.geometry.type === 'LineString') f.geometry.coordinates = f.geometry.coordinates.map(c => [c[0], c[1], h]);
+                else if (f.geometry.type === 'MultiLineString') f.geometry.coordinates = f.geometry.coordinates.map(l => l.map(c => [c[0], c[1], h]));
                 return f;
               });
             },
-            filled: false,
-            stroked: true,
-            
-            // GRADIENTE DE COLOR (Escala Plasma para fondo oscuro)
+            filled: false, stroked: true,
             getLineColor: f => {
                const z = f.properties.z_render || 0;
-               // Violeta Profundo -> Rojo Carmesí -> Naranja Fuego -> Amarillo Pálido
-               if (z < 200) return [128, 0, 128, 180];   // Valles bajos
-               if (z < 500) return [220, 20, 60, 200];   // Laderas medias
-               if (z < 900) return [255, 140, 0, 220];   // Alta montaña
-               return [255, 255, 150, 255];              // Cumbres (Brillante)
+               if (z < 200) return [128, 0, 128, 180];
+               if (z < 500) return [220, 20, 60, 200];
+               if (z < 900) return [255, 140, 0, 220];
+               return [255, 255, 150, 255];
             },
-            
-            // GROSOR AUMENTADO
             getLineWidth: 6.5, 
-            
             parameters: { depthTest: true },
-            pickable: true,
-            onHover: info => showTooltip(info, "Cota Altura")
+            pickable: false 
           }),
 
-          // --- CAPA 2: HIDROGRAFÍA (Azul Eléctrico) ---
           new GeoJsonLayer({
-            id: 'agua',
-            data: URL_AGUA,
-            filled: false,
-            stroked: true,
-            // Dodger Blue brillante
-            getLineColor: [30, 144, 255, 230], 
-            getLineWidth: 5, lineWidthMinPixels: 1,
-            pickable: true,
-          }),
-
-          // --- CAPA 3: ÁREAS PROTEGIDAS (Bordes Neón PUNTEADOS) ---
-          
-          new GeoJsonLayer({
-            id: 'parque-nacional',
-            data: URL_PARQUE_NAC,
-            filled: true, stroked: true,
-            getFillColor: [50, 205, 50, 30], // Verde Lima transp.
-            getLineColor: [50, 205, 50, 255], // Borde Neón sólido
-            getLineWidth: 30,
-            pickable: true,
-          }),
-
-          // MODIFICADO: SITIO RAMSAR (Punteado Grueso)
-          new GeoJsonLayer({
-            id: 'ramsar',
-            data: URL_RAMSAR,
-            filled: true, stroked: true,
-            getFillColor: [186, 85, 211, 30], // Orquídea transp.
-            getLineColor: [186, 85, 211, 255], // Borde brillante
-            
-            // NUEVO ESTILO PUNTEADO
-            getLineWidth: 30, // Grueso
-            getDashArray: [3, 2],
-            extensions: [new PathStyleExtension({dash: true})],
-            
-            pickable: true,
-          }),
-
-          // MODIFICADO: TIERRA MAYOR (Punteado Grueso)
-          new GeoJsonLayer({
-            id: 'tierra-mayor',
-            data: URL_TIERRA_MAYOR,
-            filled: true, stroked: true,
-            getFillColor: [255, 165, 0, 30], // Naranja transp.
-            getLineColor: [255, 165, 0, 255], // Borde brillante
-            
-            // NUEVO ESTILO PUNTEADO
-            getLineWidth: 50, // Grueso
-            getDashArray: [10, 6],
-            extensions: [new PathStyleExtension({dash: true})],
-
-            pickable: true,
-          }),
-
-          // --- CAPA 4: PLANIFICACIÓN URBANA (Alto Contraste) ---
-          
-          // Ejido Vigente (Rosa Neón / Deep Pink)
-          new GeoJsonLayer({
-            id: 'ejido-viejo',
-            data: URL_EJIDO_VIEJO,
+            id: 'agua', data: URL_AGUA,
             filled: false, stroked: true,
-            getLineColor: [255, 20, 147, 255], 
-            getLineWidth: 40, lineWidthMinPixels: 2.5,
-            getDashArray: [3, 2],
-            extensions: [new PathStyleExtension({dash: true})],
-            pickable: true,
+            getLineColor: [30, 144, 255, 230], getLineWidth: 12, pickable: false
           }),
 
-          // Ejido Nuevo (Volumen Cyan Brillante)
           new GeoJsonLayer({
-            id: 'ejido-nuevo',
-            data: URL_EJIDO_NUEVO,
-            extruded: false,
+            id: 'parque-nacional', data: URL_PARQUE_NAC,
             filled: true, stroked: true,
-            getFillColor: [0, 255, 255, 35], // Cyan transparente
-            getLineColor: [0, 255, 255, 255], // Borde Cyan Sólido
-            getLineWidth: 100,
-            getDashArray: [30, 20],
+            getFillColor: [50, 205, 50, 30], getLineColor: [50, 205, 50, 255],
+            getLineWidth: 30, pickable: false
+          }),
+          new GeoJsonLayer({
+            id: 'ramsar', data: URL_RAMSAR,
+            filled: true, stroked: true,
+            getFillColor: [186, 85, 211, 30], getLineColor: [186, 85, 211, 255],
+            getLineWidth: 30, getDashArray: [3, 2], extensions: [new PathStyleExtension({dash: true})],
+            pickable: false
+          }),
+          new GeoJsonLayer({
+            id: 'tierra-mayor', data: URL_TIERRA_MAYOR,
+            filled: true, stroked: true,
+            getFillColor: [255, 165, 0, 30], getLineColor: [255, 165, 0, 255],
+            getLineWidth: 50, getDashArray: [10, 6], extensions: [new PathStyleExtension({dash: true})],
+            pickable: false
+          }),
+
+          new GeoJsonLayer({
+            id: 'ejido-viejo', data: URL_EJIDO_VIEJO,
+            filled: false, stroked: true,
+            getLineColor: [255, 20, 147, 255], getLineWidth: 40,
+            getDashArray: [3, 2], extensions: [new PathStyleExtension({dash: true})],
+            pickable: false
+          }),
+          new GeoJsonLayer({
+            id: 'ejido-nuevo', data: URL_EJIDO_NUEVO,
+            extruded: false, filled: false, stroked: true,
+            getFillColor: [0, 255, 255, 35], getLineColor: [0, 255, 255, 255],
+            getLineWidth: 100, getDashArray: [30, 20], extensions: [new PathStyleExtension({dash: true})],
+            pickable: false
+          }),
+
+
+          // ZONAS (Base Roja Uniforme - Punteada)
+          new GeoJsonLayer({
+            id: 'zonas-597',
+            data: URL_ZONAS_597,
+            extruded: false,
+            // getElevation: 400,
+            filled: true, stroked: true,
+            // ROJO CARMESÍ
+            getFillColor: [220, 20, 60, 25], 
+            getLineColor: [220, 20, 60, 255], 
+            
+            // Estilo Punteado Grueso
+            getLineWidth: 40, 
+            getDashArray: [3, 2],
             extensions: [new PathStyleExtension({dash: true})],
+            
             pickable: true,
-          })
+            onHover: info => showTooltip(info, "ZONA OTBN")
+          }),
+
+          // SUBZONAS (Torres AMARILLAS Uniformes - Punteadas)
+          new GeoJsonLayer({
+            id: 'subzonas-597',
+            data: URL_SUBZONAS_597,
+            extruded: false,
+            // getElevation: 800,
+            filled: true, stroked: true,
+            // AMARILLO PURO
+            getFillColor: [255, 255, 0, 40], 
+            getLineColor: [255, 255, 0, 255], 
+            
+            // Estilo Punteado Grueso
+            getLineWidth: 40,
+            getDashArray: [3, 2],
+            extensions: [new PathStyleExtension({dash: true})],
+            
+            pickable: true,
+            onHover: info => showTooltip(info, "SUBZONA")
+          }),
         ]
       });
 
+      // TOOLTIP (Detecta datos reales del GeoJSON)
       function showTooltip(info, label) {
         const el = document.getElementById('tooltip');
         if (info.object) {
           const p = info.object.properties || {};
-          // Detectar nombre o altura
-          let name = p.nombre || p.fna || p.nam || p.layer || '';
-          const z_val = p.crv || p.Valor || p.elevacion || p.cota;
+          let title = label;
+          let body = '';
+          let borderColor = '#fff';
 
-          if (z_val && label === "Cota Altura") name = `${z_val} m.s.n.m.`;
-          if (name === '') name = 'Sin Datos';
+          if (label === "ZONA OTBN") {
+             // Datos de la capa de ZONAS (ley597)
+             // Prioridad: fna -> nam -> 'Zona'
+             title = p.fna || p.nam || 'Zona General';
+             
+             // Datos extra: subarea y sup
+             body = `<span style="color:#aaa;">Subárea:</span> ${p.subarea || 'N/A'}<br>
+                     <span style="color:#aaa;">Superficie:</span> ${p.sup || '-'} ha`;
+                     
+             borderColor = '#dc143c'; // Borde Rojo
+          } 
+          else if (label === "SUBZONA") {
+             // Datos de la capa de SUBZONAS
+             title = p.areas || 'Subzona';
+             body = `<span style="color:#aaa;">Código:</span> <strong>${p.abreviatur || 'N/A'}</strong><br>
+                     <span style="color:#aaa;">Zona:</span> ${p.zona || ''}`;
+             borderColor = '#00ffff'; // Borde Cyan
+          }
 
           el.style.display = 'block';
-          el.style.left = info.x + 10 + 'px';
-          el.style.top = info.y + 10 + 'px';
-          el.innerHTML = `<strong>${label}</strong><br>${name}`;
+          el.style.left = info.x + 15 + 'px';
+          el.style.top = info.y + 'px';
+          el.innerHTML = `<strong style="text-transform:uppercase; font-size:12px">${title}</strong><br><div style="margin-top:4px">${body}</div>`;
           
-          // Color del borde del tooltip según la capa (opcional, detalle fino)
-          let borderColor = '#00ffff';
-          if (label.includes("VIGENTE")) borderColor = '#ff1493';
-          if (label.includes("Cota")) borderColor = '#ff8c00';
           el.style.borderColor = borderColor;
-          el.style.boxShadow = `4px 4px 0px ${borderColor}33`; // Sombra con color
-
+          el.style.boxShadow = `0 0 10px ${borderColor}44`; 
         } else {
           el.style.display = 'none';
         }
